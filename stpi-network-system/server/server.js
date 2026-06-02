@@ -1,0 +1,76 @@
+const http = require('http');
+const express = require('express');
+const cors = require('cors');
+const { Server } = require('socket.io');
+const connectDB = require('./config/db');
+const { port, clientUrl } = require('./config/env');
+const authRoutes = require('./routes/authRoutes');
+const networkRoutes = require('./routes/networkRoutes');
+const enterpriseRoutes = require('./routes/enterpriseRoutes');
+const wifiRoutes = require('./routes/wifiRoutes');
+const errorHandler = require('./middleware/errorHandler');
+const { initSockets } = require('./sockets/index');
+
+require('dotenv').config();
+
+const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: clientUrl,
+    methods: ['GET', 'POST'],
+  },
+});
+
+app.use(
+  cors({
+    origin: clientUrl,
+    credentials: true,
+  })
+);
+app.use(express.json());
+
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', service: 'STPI Network Monitoring API' });
+});
+
+app.use('/api/auth', authRoutes);
+app.use('/api/network', networkRoutes);
+app.use('/api/enterprise', enterpriseRoutes);
+app.use('/api/wifi', wifiRoutes);
+
+app.use(errorHandler);
+
+initSockets(io);
+
+const bootstrapWifi = async () => {
+  const wifiManagement = require('./services/wifiManagementService');
+  try {
+    await wifiManagement.seedVault();
+    await wifiManagement.tick();
+    console.log('[WiFi] Enterprise SSID vault ready');
+  } catch (err) {
+    console.warn('[WiFi] Vault bootstrap:', err.message);
+  }
+};
+
+connectDB().then(bootstrapWifi);
+
+server.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(
+      `Port ${port} is already in use. Set PORT in server/.env (e.g. 5001). ` +
+        'On Windows, PostgreSQL sometimes binds to port 5000.'
+    );
+  } else {
+    console.error('Server failed to start:', err.message);
+  }
+  process.exit(1);
+});
+
+module.exports = { app, server, io };

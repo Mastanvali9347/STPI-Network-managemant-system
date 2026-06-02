@@ -1,0 +1,128 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-surface-900: #0b0f17;
+  --color-surface-800: #111827;
+  --color-surface-700: #1a2332;
+  --color-surface-600: #243044;
+  --color-accent-cyan: #22d3ee;
+  --color-accent-blue: #3b82f6;
+  --color-accent-emerald: #10b981;
+  --color-accent-amber: #f59e0b;
+  --color-accent-rose: #f43f5e;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-surface-900);
+  color: #e2e8f0;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+.react-flow__node {
+  font-size: 12px;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2.5s ease-in-out infinite;
+}
+
+/* —— Network topology (React Flow) —— */
+.topology-glow {
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.08),
+    0 0 40px rgba(34, 211, 238, 0.06);
+}
+
+.topology-flow .react-flow__controls button {
+  background: rgb(15 23 42 / 0.9);
+  border-color: rgb(71 85 105 / 0.8);
+  color: #94a3b8;
+}
+
+.topology-flow .react-flow__controls button:hover {
+  background: rgb(30 41 59);
+  color: #22d3ee;
+}
+
+@keyframes topology-blink {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6); }
+  50% { opacity: 0.85; box-shadow: 0 0 8px 2px rgba(52, 211, 153, 0.4); }
+}
+
+.topology-blink {
+  animation: topology-blink 2s ease-in-out infinite;
+}
+
+@keyframes topology-particle-float {
+  0%, 100% { transform: translateY(0); opacity: 0.2; }
+  50% { transform: translateY(-12px); opacity: 0.7; }
+}
+
+.topology-particle {
+  animation: topology-particle-float 4s ease-in-out infinite;
+}
+
+@keyframes topology-edge-glow {
+  0%, 100% { stroke-opacity: 0.85; }
+  50% { stroke-opacity: 1; }
+}
+
+.topology-edge-pulse {
+  animation: topology-edge-glow 1.8s ease-in-out infinite;
+}
+
+.topology-packet {
+  pointer-events: none;
+}
+
+/* Enterprise dashboard polish */
+.shimmer-border {
+  position: relative;
+}
+.shimmer-border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(105deg, transparent 40%, rgba(34, 211, 238, 0.25) 50%, transparent 60%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
