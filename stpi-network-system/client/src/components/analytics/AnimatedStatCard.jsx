@@ -17,7 +17,7 @@ export const AnimatedStatCard = ({ label, value, suffix = '', icon: Icon, accent
     <div
       className={`relative overflow-hidden rounded-xl border bg-slate-900/50 p-4 backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] shimmer-border ${ring[accent]}`}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent pointer-events-none" />
       {live && (
         <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
       )}

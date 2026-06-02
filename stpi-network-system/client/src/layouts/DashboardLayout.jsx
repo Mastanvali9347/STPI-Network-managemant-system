@@ -12,7 +12,7 @@ export const DashboardLayout = () => {
   return (
     <SettingsProvider>
     <RealtimeProvider>
-    <div className="flex min-h-screen bg-surface-900 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-950/20 via-surface-900 to-surface-900">
+    <div className="flex min-h-screen bg-surface-900 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-cyan-950/20 via-surface-900 to-surface-900">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-h-screen flex-1 flex-col lg:ml-0">
         <Navbar onMenuClick={() => setSidebarOpen(true)} />
