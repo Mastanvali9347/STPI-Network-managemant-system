@@ -7,11 +7,12 @@ export const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [initializing, setInitializing] = useState(true);
+  const [initializing, setInitializing] = useState(false);
 
   /**
    * Auto-login: validate stored JWT by fetching profile from API.
    */
+  /*
   useEffect(() => {
     const bootstrap = async () => {
       const token = authService.getToken();
@@ -35,6 +36,7 @@ export const AuthProvider = ({ children }) => {
 
     bootstrap();
   }, []);
+  */
 
   const login = useCallback(async (email, password) => {
     setLoading(true);

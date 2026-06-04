@@ -1,10 +1,8 @@
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
 const deviceController = require('../controllers/deviceController');
 const enterpriseController = require('../controllers/enterpriseController');
 
 const router = express.Router();
-router.use(authMiddleware);
 
 // Device management
 router.get('/devices', deviceController.listDevices);

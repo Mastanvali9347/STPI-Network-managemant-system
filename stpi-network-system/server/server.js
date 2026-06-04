@@ -4,7 +4,6 @@ const cors = require('cors');
 const { Server } = require('socket.io');
 const connectDB = require('./config/db');
 const { port, clientUrls } = require('./config/env');
-const authRoutes = require('./routes/authRoutes');
 const networkRoutes = require('./routes/networkRoutes');
 const enterpriseRoutes = require('./routes/enterpriseRoutes');
 const wifiRoutes = require('./routes/wifiRoutes');
@@ -42,7 +41,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', service: 'STPI Network Monitoring API' });
 });
 
-app.use('/api/auth', authRoutes);
 app.use('/api/network', networkRoutes);
 app.use('/api/enterprise', enterpriseRoutes);
 app.use('/api/wifi', wifiRoutes);

@@ -1,5 +1,4 @@
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
 const {
   getDevices,
   getAnalytics,
@@ -11,8 +10,6 @@ const {
 } = require('../controllers/networkController');
 
 const router = express.Router();
-
-router.use(authMiddleware);
 
 // Primary monitoring API (simulated live data)
 router.get('/devices', getDevices);

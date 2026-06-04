@@ -38,9 +38,7 @@ axiosClient.interceptors.response.use(
     if (status === 401) {
       localStorage.removeItem('stpi_token');
       localStorage.removeItem('stpi_user');
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
-      }
+      // Do not redirect to a login route when the dashboard is intended to be the primary view.
     }
 
     return Promise.reject(error);

@@ -52,7 +52,7 @@ export const ProfileDropdown = () => {
             onClick={() => {
               setOpen(false);
               logout();
-              navigate(ROUTES.LOGIN);
+              navigate(ROUTES.DASHBOARD);
             }}
             className="flex w-full items-center gap-2 px-4 py-2 text-sm text-rose-400 hover:bg-rose-500/10"
           >

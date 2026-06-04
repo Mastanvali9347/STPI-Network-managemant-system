@@ -1,10 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { DashboardLayout } from '../layouts/DashboardLayout';
-import { AuthLayout } from '../layouts/AuthLayout';
-import { ProtectedRoute } from './ProtectedRoute';
-import { PublicRoute } from './PublicRoute';
-import { LoginPage } from '../pages/Login';
 import { AuthLoading } from '../components/AuthLoading';
 import { ROUTES } from '../utils/constants';
 
@@ -27,87 +23,79 @@ const PageLoader = () => (
 
 export const AppRoutes = () => (
   <Routes>
-    <Route element={<PublicRoute />}>
-      <Route element={<AuthLayout />}>
-        <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-      </Route>
-    </Route>
-
-    <Route element={<ProtectedRoute />}>
-      <Route element={<DashboardLayout />}>
-        <Route
-          path={ROUTES.DASHBOARD}
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <DashboardPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path={ROUTES.ANALYTICS}
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <AnalyticsPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path={ROUTES.TOPOLOGY}
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <TopologyPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path={ROUTES.DEVICES}
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <DevicesPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path={ROUTES.WIFI}
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <WifiPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path={ROUTES.USERS}
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <UsersPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path={ROUTES.ALERTS}
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <AlertsPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path={ROUTES.REPORTS}
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <ReportsPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path={ROUTES.SETTINGS}
-          element={
-            <Suspense fallback={<PageLoader />}>
-              <SettingsPage />
-            </Suspense>
-          }
-        />
-      </Route>
+    <Route element={<DashboardLayout />}>
+      <Route
+        path={ROUTES.DASHBOARD}
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <DashboardPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path={ROUTES.ANALYTICS}
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <AnalyticsPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path={ROUTES.TOPOLOGY}
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <TopologyPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path={ROUTES.DEVICES}
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <DevicesPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path={ROUTES.WIFI}
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <WifiPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path={ROUTES.USERS}
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <UsersPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path={ROUTES.ALERTS}
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <AlertsPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path={ROUTES.REPORTS}
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <ReportsPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path={ROUTES.SETTINGS}
+        element={
+          <Suspense fallback={<PageLoader />}>
+            <SettingsPage />
+          </Suspense>
+        }
+      />
     </Route>
 
     <Route path="/" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
