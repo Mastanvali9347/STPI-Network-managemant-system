@@ -7,6 +7,12 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use((config) => {
+  if (!API_BASE_URL) {
+    const error = new Error(BACKEND_UNAVAILABLE_MESSAGE);
+    error.isBackendUnavailable = true;
+    return Promise.reject(error);
+  }
+
   const token = localStorage.getItem('stpi_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

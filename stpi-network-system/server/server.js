@@ -26,6 +26,8 @@ const corsOptions = {
   credentials: true,
 };
 
+console.log('[CORS] Allowed origins:', clientUrls.length ? clientUrls.join(', ') : 'none');
+
 const io = new Server(server, {
   cors: {
     ...corsOptions,
