@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-import { SOCKET_URL } from '../utils/constants';
+import { SOCKET_URL } from '../config/api';
 import { SOCKET_EVENTS } from '../utils/socketEvents';
 
 let socket = null;

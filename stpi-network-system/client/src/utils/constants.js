@@ -1,5 +1,7 @@
-export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
-export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5001';
+import { API_BASE_URL, SOCKET_URL } from '../config/api';
+
+export const API_BASE = API_BASE_URL;
+export { SOCKET_URL };
 
 export const ROUTES = {
   LOGIN: '/login',
