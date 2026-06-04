@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const connectDB = require('./config/db');
-const { port, clientUrl } = require('./config/env');
+const { port, clientUrls } = require('./config/env');
 const authRoutes = require('./routes/authRoutes');
 const networkRoutes = require('./routes/networkRoutes');
 const enterpriseRoutes = require('./routes/enterpriseRoutes');
@@ -16,19 +16,24 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || clientUrls.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS origin denied: ${origin}`));
+  },
+  credentials: true,
+};
+
 const io = new Server(server, {
   cors: {
-    origin: clientUrl,
+    ...corsOptions,
     methods: ['GET', 'POST'],
   },
 });
 
-app.use(
-  cors({
-    origin: clientUrl,
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/api/health', (req, res) => {
