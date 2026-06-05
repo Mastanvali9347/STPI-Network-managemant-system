@@ -13,6 +13,7 @@ const UsersPage = lazy(() => import('../pages/Users').then((m) => ({ default: m?
 const AlertsPage = lazy(() => import('../pages/Alerts').then((m) => ({ default: m?.AlertsPage || m?.default })));
 const ReportsPage = lazy(() => import('../pages/Reports').then((m) => ({ default: m?.ReportsPage || m?.default })));
 const SettingsPage = lazy(() => import('../pages/Settings').then((m) => ({ default: m?.SettingsPage || m?.default })));
+const LandingPage = lazy(() => import('../pages/Landing').then((m) => ({ default: m?.LandingPage || m?.default })));
 
 
 const PageLoader = () => (
@@ -23,6 +24,17 @@ const PageLoader = () => (
 
 export const AppRoutes = () => (
   <Routes>
+    {/* Landing Page */}
+    <Route
+      path={ROUTES.LANDING}
+      element={
+        <Suspense fallback={<PageLoader />}>
+          <LandingPage />
+        </Suspense>
+      }
+    />
+
+    {/* Dashboard Routes wrapper */}
     <Route element={<DashboardLayout />}>
       <Route
         path={ROUTES.DASHBOARD}
@@ -98,7 +110,8 @@ export const AppRoutes = () => (
       />
     </Route>
 
-    <Route path="/" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
-    <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
+    <Route path="/login" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
+    <Route path="*" element={<Navigate to={ROUTES.LANDING} replace />} />
   </Routes>
 );
+

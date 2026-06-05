@@ -5,7 +5,7 @@ export const FloorManagementPanel = ({ floorStats = [] }) => (
     {floorStats.map((f) => (
       <div
         key={f.floor}
-        className="rounded-xl border border-white/10 bg-gradient-to-br from-slate-900/80 to-cyan-950/20 p-4 backdrop-blur-md hover:border-cyan-500/25 transition"
+        className="rounded-xl border border-white/10 bg-linear-to-br from-slate-900/80 to-cyan-950/20 p-4 backdrop-blur-md hover:border-cyan-500/25 transition"
       >
         <div className="flex items-center gap-2 mb-3">
           <Building2 className="h-4 w-4 text-cyan-400" />
@@ -19,7 +19,7 @@ export const FloorManagementPanel = ({ floorStats = [] }) => (
         </dl>
         <div className="mt-3 h-1.5 rounded-full bg-slate-800 overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 transition-all duration-500"
+            className="h-full bg-linear-to-r from-cyan-500 to-emerald-500 transition-all duration-500"
             style={{ width: `${Math.min(100, (f.users / 50) * 100)}%` }}
           />
         </div>

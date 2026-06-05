@@ -6,6 +6,7 @@
 const topologySimulator = require('./topologySimulator');
 const deviceManagement = require('./deviceManagementService');
 const wifiManagement = require('./wifiManagementService');
+const { isOfficeHours } = require('../data/enterpriseSsids');
 
 const BASE_DEVICES = [
   {
@@ -256,48 +257,58 @@ const tick = () => {
     second: '2-digit',
   });
 
+  const officeHours = isOfficeHours();
+
   state.devices = state.devices.map((d) => {
-    const status = pickStatus(d.status === 'offline' && Math.random() > 0.7 ? 'online' : d.status);
+    const status = officeHours
+      ? pickStatus(d.status === 'offline' && Math.random() > 0.7 ? 'online' : d.status)
+      : 'offline';
     return {
       ...d,
       status,
-      uptime: jitter(status === 'online' ? 99 : 85, 2),
-      traffic: jitter(d.traffic, 40),
-      latency: jitter(d.latency, status === 'warning' ? 15 : 5),
-      activeUsers: jitter(d.activeUsers, 4),
+      uptime: officeHours ? jitter(status === 'online' ? 99 : 85, 2) : 0,
+      traffic: officeHours ? jitter(d.traffic, 40) : 0,
+      latency: officeHours ? jitter(d.latency, status === 'warning' ? 15 : 5) : 0,
+      activeUsers: officeHours ? jitter(d.activeUsers, 4) : 0,
     };
   });
 
   const wifiLive = wifiManagement.getCachedTick();
   if (wifiLive?.networks?.length) {
-    state.wifi = wifiLive.networks.map((w) => ({ ...w, password: '********' }));
+    state.wifi = wifiLive.networks.map((w) => ({
+      ...w,
+      password: '********',
+      status: officeHours ? w.status : 'offline',
+      connectedUsers: officeHours ? w.connectedUsers : 0,
+      signalStrength: officeHours ? w.signalStrength : -100,
+    }));
   } else {
     state.wifi = state.wifi.map((w) => ({
       ...w,
-      status: pickStatus(w.status),
-      connectedUsers: jitter(w.connectedUsers, 6),
-      signalStrength: jitter(w.signalStrength, 4),
+      status: officeHours ? pickStatus(w.status) : 'offline',
+      connectedUsers: officeHours ? jitter(w.connectedUsers, 6) : 0,
+      signalStrength: officeHours ? jitter(w.signalStrength, 4) : -100,
       password: '********',
     }));
   }
 
   state.users = state.users.map((u) => ({
     ...u,
-    status: pickStatus(u.status),
-    uploadSpeed: jitter(u.uploadSpeed, 3),
-    downloadSpeed: jitter(u.downloadSpeed, 8),
+    status: officeHours ? pickStatus(u.status) : 'offline',
+    uploadSpeed: officeHours ? jitter(u.uploadSpeed, 3) : 0,
+    downloadSpeed: officeHours ? jitter(u.downloadSpeed, 8) : 0,
   }));
 
-  const inbound = jitter(320, 90);
-  const outbound = jitter(250, 70);
+  const inbound = officeHours ? jitter(320, 90) : 0;
+  const outbound = officeHours ? jitter(250, 70) : 0;
   pushHistory(state.bandwidthHistory, { time: timeLabel, inbound, outbound });
   pushHistory(state.usersHistory, {
     time: timeLabel,
-    users: state.users.filter((u) => u.status === 'online').length + jitter(60, 5),
+    users: officeHours ? state.users.filter((u) => u.status === 'online').length + jitter(60, 5) : 0,
   });
   pushHistory(state.trafficHistory, {
     time: timeLabel,
-    traffic: state.devices.reduce((s, d) => s + d.traffic, 0) / state.devices.length,
+    traffic: officeHours ? state.devices.reduce((s, d) => s + d.traffic, 0) / state.devices.length : 0,
   });
 
   deviceManagement.syncFromSimulator(state.devices);

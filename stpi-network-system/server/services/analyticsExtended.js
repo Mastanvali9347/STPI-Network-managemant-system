@@ -22,23 +22,32 @@ const getExtendedAnalytics = (range = '24h', snapshot = {}) => {
   const online = devices.filter((d) => d.status === 'online').length;
   const offline = devices.filter((d) => d.status === 'offline').length;
 
+  const isLive = !!snapshot.wifi?.some((w) => w.status === 'online') || !!devices.some((d) => d.status === 'online');
+  const activeWifiCount = snapshot.wifi?.filter((w) => w.status === 'online').length || 0;
+  const baseBandwidth = isLive ? 280 : 40;
+  const baseTraffic = isLive ? 350 : 30;
+  const baseUsers = isLive ? 65 : 10;
+
   const bandwidth = labels.map((time) => ({
     time,
-    inbound: Math.round(jitter(280 + Math.random() * 120)),
-    outbound: Math.round(jitter(210 + Math.random() * 90)),
+    inbound: Math.round(jitter(baseBandwidth + Math.random() * 120)),
+    outbound: Math.round(jitter((baseBandwidth * 0.75) + Math.random() * 90)),
   }));
 
   const traffic = labels.map((time) => ({
     time,
-    traffic: Math.round(jitter(350 + Math.random() * 150)),
+    traffic: Math.round(jitter(baseTraffic + Math.random() * 150)),
   }));
 
   const connectedUsers = labels.map((time) => ({
     time,
-    users: Math.round(jitter(65 + Math.random() * 25)),
+    users: Math.round(jitter(baseUsers + Math.random() * 25)),
   }));
 
-  const floorUsers = [
+  const floorUsers = snapshot.floorStats?.map((f) => ({
+    floor: f.floor,
+    users: f.users,
+  })) || [
     { floor: 'Floor 1', users: 24 },
     { floor: 'Floor 2', users: 31 },
     { floor: 'Server Room', users: 6 },

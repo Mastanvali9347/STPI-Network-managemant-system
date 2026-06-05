@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { connectSocket, onConnectionStatus } from '../services/socketService';
+import { connectSocket, onConnectionStatus, isSocketAvailable } from '../services/socketService';
 import { SOCKET_EVENTS } from '../utils/socketEvents';
 import { scheduleFrame } from '../utils/scheduleFrame';
 
@@ -20,18 +20,36 @@ const initialState = {
 
 /**
  * Subscribes to batched monitoring-snapshot Socket.IO events (one per tick).
+ * Falls back to unavailable state if backend is not configured.
  */
 export const useRealtimeMonitoring = () => {
   const [data, setData] = useState(initialState);
-  const [connectionStatus, setConnectionStatus] = useState('connecting');
+  const [connectionStatus, setConnectionStatus] = useState(
+    isSocketAvailable() ? 'connecting' : 'unavailable'
+  );
   const pendingRef = useRef(null);
 
   useEffect(() => {
+    // If Socket.IO is not available, stay in unavailable state
+    if (!isSocketAvailable()) {
+      console.log('[Realtime] Socket.IO unavailable - using fallback mode');
+      setConnectionStatus('unavailable');
+      return;
+    }
+
     const unsubStatus = onConnectionStatus((status) => {
+      console.log('[Realtime] Connection status changed:', status);
       setConnectionStatus(status);
     });
 
     const socket = connectSocket();
+
+    // Handle case where socket failed to initialize
+    if (!socket) {
+      console.warn('[Realtime] Socket connection returned null');
+      setConnectionStatus('unavailable');
+      return unsubStatus;
+    }
 
     const flushSnapshot = () => {
       const snapshot = pendingRef.current;
@@ -78,5 +96,6 @@ export const useRealtimeMonitoring = () => {
     ...data,
     connectionStatus,
     isLive,
+    isSocketAvailable: isSocketAvailable(),
   };
 };

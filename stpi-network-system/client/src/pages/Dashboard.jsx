@@ -19,6 +19,7 @@ import {
 } from '../components/monitoring/NetworkChart';
 import { StatCardSkeleton, ChartSkeleton } from '../components/monitoring/Skeleton';
 import { useRealtime } from '../hooks/useRealtime';
+import { useSettings } from '../hooks/useSettings';
 import { formatNumber } from '../utils/formatters';
 import { AIInsightsPanel } from '../components/insights/AIInsightsPanel';
 import { enterpriseApi } from '../api/enterpriseApi';
@@ -33,6 +34,7 @@ export const DashboardPage = () => {
     connectionStatus,
     isLive,
   } = useRealtime();
+  const { settings } = useSettings();
 
   const [insights, setInsights] = useState({ insights: [], recommendations: [] });
 
@@ -46,9 +48,15 @@ export const DashboardPage = () => {
     alerts?.filter((a) => !a.acknowledged && a.severity !== 'info').length ?? 0;
 
   const offlineCount = (devices || []).filter((d) => d.status === 'offline').length;
+  const visibleDevices = settings.showOfflineDevices ? devices : (devices || []).filter((d) => d.status !== 'offline');
 
   return (
     <div className="space-y-6">
+      {settings.showOfficeHoursBanner && (
+        <div className="rounded-2xl border border-cyan-500/20 bg-cyan-950/10 p-4 text-sm text-cyan-200">
+          Office hours active: 7:00 AM – 7:00 PM IST. Use the Settings page to hide this banner.
+        </div>
+      )}
       <div className="relative overflow-hidden rounded-2xl border border-cyan-500/20 bg-linear-to-r from-slate-900 via-slate-900 to-cyan-950/30 p-6 backdrop-blur-xl">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-cyan-500/10 via-transparent to-transparent" />
         <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -197,8 +205,8 @@ export const DashboardPage = () => {
         subtitle="Live device-update stream"
         className="bg-white/5! border-white/10!"
       >
-        {devices?.length ? (
-          <DeviceTable devices={devices} />
+        {visibleDevices?.length ? (
+          <DeviceTable devices={visibleDevices} />
         ) : (
           <ChartSkeleton />
         )}

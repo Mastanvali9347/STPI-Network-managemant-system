@@ -21,7 +21,7 @@ exports.listNetworks = async (req, res, next) => {
       floorStats: live.floorStats,
       analytics: live.analytics,
       events: live.events,
-      canRevealPassword: can(req.user.role, 'REVEAL_WIFI_PASSWORD'),
+      canRevealPassword: req.user ? can(req.user.role, 'REVEAL_WIFI_PASSWORD') : false,
     });
   } catch (e) {
     next(e);

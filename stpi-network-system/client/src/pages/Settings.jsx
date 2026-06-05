@@ -3,10 +3,12 @@ import { Card } from '../components/ui/Card';
 import { useAuth } from '../hooks/useAuth';
 import { useSettings } from '../hooks/useSettings';
 import { authService } from '../services/authService';
+import { Sun, Moon, Laptop } from 'lucide-react';
+
 
 export const SettingsPage = () => {
   const { user } = useAuth();
-  const { settings, updateSettings } = useSettings();
+  const { settings, updateSettings, resetSettings } = useSettings();
   const [pwd, setPwd] = useState({ current: '', next: '', confirm: '' });
   const [pwdMsg, setPwdMsg] = useState('');
   const [pwdLoading, setPwdLoading] = useState(false);
@@ -47,48 +49,85 @@ export const SettingsPage = () => {
         </Card>
 
         <Card title="Dashboard preferences" subtitle="Stored locally in browser">
-          <div className="space-y-4 text-sm">
-            <label className="flex items-center justify-between">
-              <span className="text-slate-400">Theme</span>
-              <select
-                value={settings.theme}
-                onChange={(e) => updateSettings({ theme: e.target.value })}
-                className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-white"
-              >
-                <option value="dark">Dark (NOC)</option>
-                <option value="light">Light</option>
-              </select>
-            </label>
-            <label className="flex items-center justify-between gap-4">
-              <span className="text-slate-400">Refresh interval (simulated)</span>
+          <div className="space-y-6 text-sm">
+            <div className="space-y-3">
+              <span className="text-slate-400 block font-medium">Theme mode</span>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { value: 'light', label: 'Light', icon: Sun },
+                  { value: 'dark', label: 'Dark (NOC)', icon: Moon },
+                  { value: 'system', label: 'System', icon: Laptop },
+                ].map((t) => {
+                  const Icon = t.icon;
+                  return (
+                    <button
+                      key={t.value}
+                      onClick={() => updateSettings({ theme: t.value })}
+                      className={`flex flex-col items-center gap-2 rounded-xl border p-3 transition-all ${
+                        settings.theme === t.value
+                          ? 'border-cyan-500 bg-cyan-500/10 text-white shadow-lg shadow-cyan-500/5'
+                          : 'border-slate-700 bg-slate-800/40 text-slate-400 hover:border-slate-500 hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span className="text-[11px] font-semibold uppercase tracking-wider">{t.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <label className="flex items-center justify-between gap-4 py-2 border-t border-slate-700/50">
+              <span className="text-slate-400">Data Refresh rate</span>
               <select
                 value={settings.refreshInterval}
                 onChange={(e) => updateSettings({ refreshInterval: Number(e.target.value) })}
-                className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-white"
+                className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-white focus:border-cyan-500 focus:outline-none"
               >
-                <option value={3}>3 seconds</option>
-                <option value={5}>5 seconds</option>
-                <option value={10}>10 seconds</option>
+                <option value={3}>Fast (3s)</option>
+                <option value={5}>Medium (5s)</option>
+                <option value={10}>Slow (10s)</option>
               </select>
             </label>
-            <label className="flex items-center gap-2 text-slate-300">
-              <input
-                type="checkbox"
-                checked={settings.notifications}
-                onChange={(e) => updateSettings({ notifications: e.target.checked })}
-              />
-              Enable toast notifications
-            </label>
-            <label className="flex items-center gap-2 text-slate-300">
-              <input
-                type="checkbox"
-                checked={settings.compactCharts}
-                onChange={(e) => updateSettings({ compactCharts: e.target.checked })}
-              />
-              Compact chart layout
-            </label>
+
+            <div className="space-y-3 border-t border-slate-700/50 pt-4">
+              <span className="text-slate-400 block font-medium">Interface controls</span>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  { key: 'notifications', label: 'Toast notifications' },
+                  { key: 'showOfficeHoursBanner', label: 'Office hours banner' },
+                  { key: 'showOfflineDevices', label: 'Show offline devices' },
+                  { key: 'showOfflineNetworks', label: 'Show offline WiFi' },
+                  { key: 'compactCharts', label: 'Compact charts' },
+                ].map((item) => (
+                  <label key={item.key} className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-700/50 bg-slate-800/30 p-2.5 transition hover:border-slate-600">
+                    <input
+                      type="checkbox"
+                      checked={settings[item.key]}
+                      onChange={(e) => updateSettings({ [item.key]: e.target.checked })}
+                      className="h-4 w-4 rounded border-slate-600 bg-slate-700 text-cyan-600 focus:ring-cyan-500 focus:ring-offset-slate-800"
+                    />
+                    <span className="text-slate-300">{item.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 border-t border-slate-700/50 pt-4">
+              <button
+                type="button"
+                onClick={resetSettings}
+                className="inline-flex w-fit items-center rounded-lg border border-slate-600 bg-slate-800 px-4 py-2 text-sm text-slate-200 transition hover:border-rose-500/50 hover:bg-rose-500/5 hover:text-rose-400"
+              >
+                Reset to factory defaults
+              </button>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Global UI preferences are stored in your browser's local storage. System default follows your OS level light/dark mode preference.
+              </p>
+            </div>
           </div>
         </Card>
+
 
         <Card title="Change password" subtitle="Requires current password" className="lg:col-span-2">
           <form onSubmit={handlePassword} className="grid gap-4 sm:grid-cols-3 max-w-3xl">

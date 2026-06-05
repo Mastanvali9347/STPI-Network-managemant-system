@@ -25,10 +25,10 @@ export const ProfileDropdown = () => {
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-2 rounded-lg border border-slate-700/60 bg-slate-800/50 pl-1 pr-2 py-1 hover:border-cyan-500/30"
       >
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 text-sm font-bold text-white">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-cyan-500 to-blue-600 text-sm font-bold text-white">
           {(user?.name || 'A').charAt(0)}
         </div>
-        <span className="hidden sm:block text-sm text-slate-200 max-w-[120px] truncate">
+        <span className="hidden sm:block text-sm text-slate-200 max-w-30 truncate">
           {user?.name}
         </span>
         <ChevronDown className="h-4 w-4 text-slate-500" />

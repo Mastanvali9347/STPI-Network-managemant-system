@@ -10,7 +10,6 @@ export const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <SettingsProvider>
     <RealtimeProvider>
     <div className="flex min-h-screen bg-surface-900 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-cyan-950/20 via-surface-900 to-surface-900">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -23,6 +22,6 @@ export const DashboardLayout = () => {
       </div>
     </div>
     </RealtimeProvider>
-    </SettingsProvider>
+
   );
 };

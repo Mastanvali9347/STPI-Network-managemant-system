@@ -1,6 +1,6 @@
 import { createContext, useMemo, useState, useCallback, useEffect } from 'react';
 import { authService } from '../services/authService';
-import { connectSocket, disconnectSocket } from '../services/socketService';
+import { connectSocket, disconnectSocket, isSocketAvailable } from '../services/socketService';
 
 export const AuthContext = createContext(null);
 
@@ -44,7 +44,17 @@ export const AuthProvider = ({ children }) => {
       const data = await authService.login(email, password);
       authService.saveSession(data.token, data.user);
       setUser(data.user);
-      connectSocket();
+      
+      // Only attempt socket connection if backend is available
+      if (isSocketAvailable()) {
+        const socket = connectSocket();
+        if (!socket) {
+          console.warn('[Auth] Socket connection failed, continuing without realtime');
+        }
+      } else {
+        console.log('[Auth] Socket.IO not available, running in API-only mode');
+      }
+      
       return data;
     } finally {
       setLoading(false);
@@ -65,6 +75,7 @@ export const AuthProvider = ({ children }) => {
       login,
       logout,
       isAuthenticated: !!user,
+      socketAvailable: isSocketAvailable(),
     }),
     [user, loading, initializing, login, logout]
   );

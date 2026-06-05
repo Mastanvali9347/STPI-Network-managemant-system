@@ -4,8 +4,10 @@ export const API_BASE = API_BASE_URL;
 export { SOCKET_URL };
 
 export const ROUTES = {
+  LANDING: '/',
   LOGIN: '/login',
   DASHBOARD: '/dashboard',
+
   ANALYTICS: '/analytics',
   TOPOLOGY: '/topology',
   DEVICES: '/devices',

@@ -5,10 +5,12 @@ import { ConnectionStatus } from '../components/monitoring/ConnectionStatus';
 import { WifiTable } from '../components/monitoring/WifiTable';
 import { WifiLiveEvents } from '../components/wifi/WifiLiveEvents';
 import { useRealtime } from '../hooks/useRealtime';
+import { useSettings } from '../hooks/useSettings';
 import { wifiApi } from '../api/wifiApi';
 
 export const WifiPage = () => {
   const { wifiEvents, connectionStatus, isLive } = useRealtime();
+  const { settings } = useSettings();
   const [networks, setNetworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -34,6 +36,8 @@ export const WifiPage = () => {
       active = false;
     };
   }, []);
+
+  const visibleNetworks = settings.showOfflineNetworks ? networks : networks.filter((n) => n.status !== 'offline');
 
   return (
     <div className="space-y-6">
@@ -65,7 +69,7 @@ export const WifiPage = () => {
               ))}
             </div>
           ) : (
-            <WifiTable networks={networks} />
+            <WifiTable networks={visibleNetworks} />
           )}
         </Card>
 

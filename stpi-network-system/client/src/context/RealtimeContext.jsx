@@ -1,21 +1,35 @@
 import { createContext, useCallback, useState, useEffect, useRef } from 'react';
 import { useRealtimeMonitoring } from '../hooks/useRealtimeMonitoring';
+import { useSettings } from '../hooks/useSettings';
 
 export const RealtimeContext = createContext(null);
 
 export const RealtimeProvider = ({ children }) => {
+  const { settings } = useSettings();
   const monitoring = useRealtimeMonitoring();
   const [toasts, setToasts] = useState([]);
   const lastAlertIdRef = useRef(null);
   const alertsInitializedRef = useRef(false);
 
+  // Show unavailability warning once if socket is not available
+  useEffect(() => {
+    if (!monitoring.isSocketAvailable && monitoring.connectionStatus === 'unavailable') {
+      const hasShownWarning = sessionStorage.getItem('socket-unavailable-shown');
+      if (!hasShownWarning) {
+        console.warn('[Realtime] Socket.IO unavailable - application running in API-only mode');
+        sessionStorage.setItem('socket-unavailable-shown', 'true');
+      }
+    }
+  }, [monitoring.isSocketAvailable, monitoring.connectionStatus]);
+
   const pushToast = useCallback((toast) => {
+    if (!settings.notifications) return;
     const id = `toast-${Date.now()}`;
     setToasts((prev) => [...prev, { id, ...toast }].slice(-5));
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 5000);
-  }, []);
+  }, [settings.notifications]);
 
   // Skip toasts for initial alert list; only notify on newly arrived alerts
   useEffect(() => {
@@ -61,6 +75,9 @@ export const RealtimeProvider = ({ children }) => {
     <RealtimeContext.Provider value={{ ...monitoring, toasts, pushToast }}>
       {children}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+      {!monitoring.isSocketAvailable && (
+        <BackendUnavailableWarning />
+      )}
     </RealtimeContext.Provider>
   );
 };
@@ -95,5 +112,19 @@ const ToastContainer = ({ toasts, onDismiss }) => (
         </div>
       </div>
     ))}
+  </div>
+);
+
+/**
+ * Warning shown when backend Socket.IO server is unavailable
+ */
+const BackendUnavailableWarning = () => (
+  <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md">
+    <div className="rounded-xl border border-amber-500/40 bg-amber-950/90 px-4 py-3 text-sm text-amber-100 shadow-xl backdrop-blur-xl">
+      <p className="font-semibold">⚠ Backend Server Unavailable</p>
+      <p className="text-xs mt-1 opacity-90">
+        Socket.IO server is not configured. Application running in API-only mode. Set VITE_SOCKET_URL or VITE_API_URL to enable real-time updates.
+      </p>
+    </div>
   </div>
 );

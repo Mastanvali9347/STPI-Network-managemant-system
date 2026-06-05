@@ -1,5 +1,6 @@
 /**
  * Enterprise WiFi management — vault + live simulation merge.
+ * Only STPI networks in KPHB location.
  */
 
 const WifiNetwork = require('../models/WifiNetwork');
@@ -7,7 +8,7 @@ const WifiAccessLog = require('../models/WifiAccessLog');
 const User = require('../models/User');
 const { encrypt, decrypt } = require('../utils/cryptoVault');
 const { isDbReady } = require('../utils/authHelpers');
-const { enterpriseSsids, demoPasswordFor } = require('../data/enterpriseSsids');
+const { enterpriseSsids, demoPasswordFor, isOfficeHours, LOCATION } = require('../data/enterpriseSsids');
 const wifiSimulator = require('./wifiSimulatorService');
 const mongoose = require('mongoose');
 
@@ -16,23 +17,29 @@ let lastTick = { networks: [], clients: [], floorStats: [], analytics: {}, event
 
 const slugId = (ssid) => `wifi-${ssid.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
-const buildLiveNetwork = (meta, dbRecord = null) => ({
-  id: dbRecord?._id?.toString() || slugId(meta.ssid),
-  ssid: meta.ssid,
-  wifiName: meta.ssid,
-  securityType: dbRecord?.securityType || meta.security,
-  floor: dbRecord?.floor || meta.floor,
-  accessPoint: dbRecord?.accessPoint || meta.ap,
-  frequency: meta.band,
-  channel: meta.channel,
-  vlan: dbRecord?.vlan ?? meta.vlan,
-  status: 'online',
-  connectedUsers: 8 + Math.floor(Math.random() * 24),
-  signalStrength: -45 - Math.floor(Math.random() * 30),
-  bandwidthMbps: 30 + Math.floor(Math.random() * 80),
-  password: '********',
-  hasVault: !!dbRecord || memoryVault.some((m) => m.ssid === meta.ssid),
-});
+const buildLiveNetwork = (meta, dbRecord = null) => {
+  const officeHours = isOfficeHours();
+  return {
+    id: dbRecord?._id?.toString() || slugId(meta.ssid),
+    ssid: meta.ssid,
+    wifiName: meta.ssid,
+    securityType: dbRecord?.securityType || meta.security,
+    floor: dbRecord?.floor || meta.floor,
+    accessPoint: dbRecord?.accessPoint || meta.ap,
+    frequency: meta.band,
+    channel: meta.channel,
+    vlan: dbRecord?.vlan ?? meta.vlan,
+    location: meta.location || LOCATION.name,
+    status: officeHours ? 'online' : 'offline',
+    connectedUsers: officeHours ? (8 + Math.floor(Math.random() * 24)) : 0,
+    signalStrength: officeHours ? (-45 - Math.floor(Math.random() * 30)) : -100,
+    bandwidthMbps: officeHours ? (30 + Math.floor(Math.random() * 80)) : 0,
+    password: '********',
+    hasVault: !!dbRecord || memoryVault.some((m) => m.ssid === meta.ssid),
+    officeHours: { start: '7:00 AM', end: '7:00 PM', timezone: 'IST' },
+  };
+};
+
 
 /** Load networks for API list (no plaintext passwords) */
 const getNetworks = async () => {
@@ -54,7 +61,7 @@ const tick = async () => {
     wifiSimulator.initClientPool(base);
   }
   wifiSimulator.simulateEvents(base);
-  const clients = wifiSimulator.tickClients();
+  const clients = wifiSimulator.tickClients(base);
   lastTick = {
     networks: base,
     clients,

@@ -1,22 +1,54 @@
 import { useEffect, useState } from 'react';
-import { connectSocket } from '../services/socketService';
+import { connectSocket, isSocketAvailable } from '../services/socketService';
 
+/**
+ * Hook for metrics from Socket.IO server
+ * Gracefully handles unavailable backend
+ */
 export const useSocketMetrics = () => {
   const [metrics, setMetrics] = useState(null);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
+    // If socket is not available, don't try to connect
+    if (!isSocketAvailable()) {
+      console.log('[Metrics] Socket.IO unavailable');
+      setConnected(false);
+      return;
+    }
+
     const socket = connectSocket();
 
-    const onConnect = () => setConnected(true);
-    const onDisconnect = () => setConnected(false);
-    const onMetrics = (data) => setMetrics(data);
+    // Handle case where socket failed to initialize
+    if (!socket) {
+      console.warn('[Metrics] Socket connection returned null');
+      setConnected(false);
+      return;
+    }
+
+    const onConnect = () => {
+      console.log('[Metrics] Connected');
+      setConnected(true);
+    };
+    
+    const onDisconnect = () => {
+      console.log('[Metrics] Disconnected');
+      setConnected(false);
+    };
+    
+    const onMetrics = (data) => {
+      setMetrics(data);
+    };
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('network:metrics', onMetrics);
 
-    socket.emit('alerts:subscribe');
+    try {
+      socket.emit('alerts:subscribe');
+    } catch (err) {
+      console.warn('[Metrics] Failed to emit alerts:subscribe', err);
+    }
 
     return () => {
       socket.off('connect', onConnect);
@@ -25,5 +57,5 @@ export const useSocketMetrics = () => {
     };
   }, []);
 
-  return { metrics, connected };
+  return { metrics, connected, socketAvailable: isSocketAvailable() };
 };

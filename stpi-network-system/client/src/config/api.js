@@ -1,22 +1,34 @@
+/**
+ * API Configuration
+ * Separates API and Socket.IO configuration for better maintainability
+ */
+
 const envApiUrl = import.meta.env.VITE_API_URL?.trim();
-const envSocketUrl = import.meta.env.VITE_SOCKET_URL?.trim();
 const isDev = import.meta.env.MODE === 'development';
 
+/**
+ * API Base URL Configuration
+ * Priority:
+ * 1. VITE_API_URL (explicit API URL)
+ * 2. localhost:5001/api (development)
+ * 3. undefined (production with no backend)
+ */
 const API_BASE_URL = envApiUrl || (isDev ? 'http://localhost:5001/api' : undefined);
-const SOCKET_URL =
-  envSocketUrl ||
-  envApiUrl?.replace(/\/api\/?$/, '') ||
-  (isDev ? 'http://localhost:5001' : undefined);
-const BACKEND_UNAVAILABLE_MESSAGE = 'Backend server is unavailable.';
 
-if (!envApiUrl && !isDev) {
-  console.warn(
-    'VITE_API_URL is not set. Backend API URL is unavailable in production.'
-  );
+const BACKEND_UNAVAILABLE_MESSAGE = 'Backend server is unavailable. Running in frontend-only mode.';
+
+// Log configuration
+console.log('[API Config]');
+console.log('  Mode:', isDev ? 'development' : 'production');
+if (API_BASE_URL) {
+  console.log('  API URL:', API_BASE_URL);
+} else {
+  console.warn('  No API URL configured - backend API unavailable');
 }
 
-console.log('API URL:', envApiUrl ?? API_BASE_URL);
-console.log('Socket URL:', envSocketUrl ?? SOCKET_URL);
+// Socket.IO config is now in src/config/socket.js
+// Import from there instead:
+export { SOCKET_URL, SOCKET_AVAILABLE } from './socket';
 
-export { API_BASE_URL, SOCKET_URL, BACKEND_UNAVAILABLE_MESSAGE };
+export { API_BASE_URL, BACKEND_UNAVAILABLE_MESSAGE };
 export default API_BASE_URL;

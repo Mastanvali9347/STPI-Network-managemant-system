@@ -40,7 +40,7 @@ export const PasswordRevealModal = ({ open, ssid, onClose, onReveal }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-70 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
       <div className="w-full max-w-md rounded-2xl border border-cyan-500/30 bg-slate-900 shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-700/60 px-5 py-4">
           <div className="flex items-center gap-2">

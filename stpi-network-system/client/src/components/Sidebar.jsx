@@ -11,9 +11,14 @@ import {
   Settings,
   LogOut,
   Activity,
+  Sun,
+  Moon,
+  Laptop,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useSettings } from '../hooks/useSettings';
 import { ROUTES } from '../utils/constants';
+
 
 const navItems = [
   { to: ROUTES.DASHBOARD, label: 'Command Center', icon: LayoutDashboard },
@@ -29,6 +34,8 @@ const navItems = [
 
 export const Sidebar = ({ open, onClose }) => {
   const { logout } = useAuth();
+  const { settings, updateSettings } = useSettings();
+
 
   const linkClass = ({ isActive }) =>
     `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
@@ -48,7 +55,7 @@ export const Sidebar = ({ open, onClose }) => {
         }`}
       >
         <div className="flex items-center gap-3 border-b border-slate-700/60 px-5 py-5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20">
             <Activity className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -66,7 +73,31 @@ export const Sidebar = ({ open, onClose }) => {
           ))}
         </nav>
 
-        <div className="border-t border-slate-700/60 p-4">
+        <div className="border-t border-slate-700/60 p-4 space-y-2">
+          <div className="flex items-center justify-between rounded-lg bg-slate-900/50 p-1.5 border border-slate-700/50">
+            <button
+              onClick={() => updateSettings({ theme: 'light' })}
+              className={`flex-1 flex justify-center py-1.5 rounded-md transition-all ${settings.theme === 'light' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
+              title="Light Mode"
+            >
+              <Sun className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => updateSettings({ theme: 'system' })}
+              className={`flex-1 flex justify-center py-1.5 rounded-md transition-all ${settings.theme === 'system' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
+              title="System Default"
+            >
+              <Laptop className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => updateSettings({ theme: 'dark' })}
+              className={`flex-1 flex justify-center py-1.5 rounded-md transition-all ${settings.theme === 'dark' ? 'bg-cyan-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
+              title="Dark Mode"
+            >
+              <Moon className="h-4 w-4" />
+            </button>
+          </div>
+
           <button
             type="button"
             onClick={logout}
@@ -77,6 +108,7 @@ export const Sidebar = ({ open, onClose }) => {
           </button>
         </div>
       </aside>
+
     </>
   );
 };
