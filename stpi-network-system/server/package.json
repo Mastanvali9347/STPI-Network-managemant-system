@@ -12,7 +12,11 @@
     "seed:wifi": "node seed/wifiSeed.js",
     "seed:network": "node seed/networkSeed.js"
   },
-  "keywords": ["network", "monitoring", "stpi"],
+  "keywords": [
+    "network",
+    "monitoring",
+    "stpi"
+  ],
   "author": "STPI",
   "license": "ISC",
   "dependencies": {
@@ -21,7 +25,7 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.16.0",
+    "mongoose": "^8.24.0",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
