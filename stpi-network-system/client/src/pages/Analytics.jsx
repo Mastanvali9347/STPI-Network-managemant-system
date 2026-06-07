@@ -8,7 +8,7 @@ import {
   Zap,
   Activity,
   Radio,
-  AlertCircle,
+  CircleAlert,
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { ConnectionStatus } from '../components/monitoring/ConnectionStatus';
@@ -94,7 +94,7 @@ export const AnalyticsPage = () => {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-slate-900/50 rounded-2xl border border-rose-500/10">
-        <AlertCircle className="h-12 w-12 text-rose-500 mb-4 opacity-70" />
+        <CircleAlert className="h-12 w-12 text-rose-500 mb-4 opacity-70" />
         <h2 className="text-xl font-semibold text-white">Analytics Unavailable</h2>
         <p className="mt-2 text-slate-400 max-w-md mx-auto">{error}</p>
         <div className="mt-4 p-4 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200">

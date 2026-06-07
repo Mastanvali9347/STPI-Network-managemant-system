@@ -1,9 +1,9 @@
-import { AlertTriangle, Info, XCircle } from 'lucide-react';
+import { TriangleAlert, Info, CircleX } from 'lucide-react';
 import { formatDateTime } from '../../utils/formatters';
 
 const icons = {
-  critical: XCircle,
-  warning: AlertTriangle,
+  critical: CircleX,
+  warning: TriangleAlert,
   info: Info,
 };
 

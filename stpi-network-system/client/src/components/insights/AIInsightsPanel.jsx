@@ -1,9 +1,9 @@
-import { Brain, Lightbulb, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
+import { Brain, Lightbulb, TriangleAlert, CircleCheck, CircleX, Info } from 'lucide-react';
 
 const typeStyles = {
-  critical: { icon: AlertTriangle, border: 'border-rose-500/40', bg: 'bg-rose-500/10', text: 'text-rose-300' },
-  warning: { icon: AlertTriangle, border: 'border-amber-500/40', bg: 'bg-amber-500/10', text: 'text-amber-300' },
-  success: { icon: CheckCircle2, border: 'border-emerald-500/40', bg: 'bg-emerald-500/10', text: 'text-emerald-300' },
+  critical: { icon: CircleX, border: 'border-rose-500/40', bg: 'bg-rose-500/10', text: 'text-rose-300' },
+  warning: { icon: TriangleAlert, border: 'border-amber-500/40', bg: 'bg-amber-500/10', text: 'text-amber-300' },
+  success: { icon: CircleCheck, border: 'border-emerald-500/40', bg: 'bg-emerald-500/10', text: 'text-emerald-300' },
   info: { icon: Info, border: 'border-cyan-500/40', bg: 'bg-cyan-500/10', text: 'text-cyan-300' },
 };
 
