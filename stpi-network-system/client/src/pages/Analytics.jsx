@@ -81,33 +81,44 @@ export const AnalyticsPage = () => {
     };
   }, [range]);
 
-  const k = useMemo(() => data?.kpis || FALLBACK_KPIS, [data]);
+  const heatmapData = useMemo(() => Array.isArray(data?.heatmap) ? data.heatmap : [], [data]);
+  const bandwidthData = useMemo(() => Array.isArray(data?.bandwidth) ? data.bandwidth : [], [data]);
+  const trafficData = useMemo(() => Array.isArray(data?.traffic) ? data.traffic : [], [data]);
+  const floorUsersData = useMemo(() => Array.isArray(data?.floorUsers) ? data.floorUsers : [], [data]);
+  const deviceCategoriesData = useMemo(() => Array.isArray(data?.deviceCategories) ? data.deviceCategories : [], [data]);
+  const healthRadarData = useMemo(() => Array.isArray(data?.networkHealthRadar) ? data.networkHealthRadar : [], [data]);
+
+  const insightsList = useMemo(() => Array.isArray(insights?.insights) ? insights.insights : [], [insights]);
+  const recommendationsList = useMemo(() => Array.isArray(insights?.recommendations) ? insights.recommendations : [], [insights]);
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-        <AlertCircle className="h-12 w-12 text-rose-500 mb-4 opacity-50" />
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-slate-900/50 rounded-2xl border border-rose-500/10">
+        <AlertCircle className="h-12 w-12 text-rose-500 mb-4 opacity-70" />
         <h2 className="text-xl font-semibold text-white">Analytics Unavailable</h2>
-        <p className="mt-2 text-slate-400 max-w-md">{error}</p>
+        <p className="mt-2 text-slate-400 max-w-md mx-auto">{error}</p>
+        <div className="mt-4 p-4 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200">
+          Tip: Check if your backend URL (VITE_API_URL) matches the live service.
+        </div>
         <button
           onClick={() => window.location.reload()}
-          className="mt-6 rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-400"
+          className="mt-8 rounded-lg bg-cyan-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/20"
         >
-          Try Again
+          Retry Connection
         </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-12">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Advanced Analytics</h1>
-          <p className="text-sm text-slate-400">Enterprise metrics · STPI Intelligent Monitoring</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Advanced Analytics</h1>
+          <p className="text-sm text-slate-400">Enterprise metrics · STPI Intelligent Monitoring NOC</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <ChartRangeFilter value={range} onChange={setRange} />
+          <ChartRangeFilter value={range} onChange={(val) => setRange(val)} />
           <ConnectionStatus status={connectionStatus} isLive={isLive} />
         </div>
       </div>
@@ -116,7 +127,7 @@ export const AnalyticsPage = () => {
         {loading ? (
           <div className="grid gap-3 grid-cols-2 lg:grid-cols-5">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="h-20 rounded-xl bg-slate-800/60 animate-pulse shimmer-border" />
+              <div key={`skeleton-${i}`} className="h-24 rounded-xl bg-slate-800/60 animate-pulse shimmer-border" />
             ))}
           </div>
         ) : (
@@ -128,7 +139,7 @@ export const AnalyticsPage = () => {
             <AnimatedStatCard label="Connected Users" value={k.connectedUsers} icon={Users} live={isLive} />
             <AnimatedStatCard label="Bandwidth" value={k.bandwidthUsagePercent} suffix="%" icon={Gauge} accent="amber" live={isLive} />
             <AnimatedStatCard label="Internet" value={k.internetSpeedMbps} suffix=" Mbps" icon={Zap} live={isLive} />
-            <AnimatedStatCard label="Alerts" value={k.alertCount} accent="rose" icon={Bell} live={isLive} />
+            <AnimatedStatCard label="Live Alerts" value={k.alertCount} accent="rose" icon={Bell} live={isLive} />
             <AnimatedStatCard label="Packet Activity" value={k.packetTraffic} icon={Radio} accent="violet" live={isLive} />
             <AnimatedStatCard label="Cloud Health" value={k.deviceHealthPercent} suffix="%" accent="emerald" live={isLive} />
           </div>
@@ -138,8 +149,8 @@ export const AnalyticsPage = () => {
       <ErrorBoundary name="AI Insights">
         <Card title="STPI AI Smart Insights" className="bg-white/5! border-white/10!">
           <AIInsightsPanel
-            insights={Array.isArray(insights?.insights) ? insights.insights : []}
-            recommendations={Array.isArray(insights?.recommendations) ? insights.recommendations : []}
+            insights={insightsList}
+            recommendations={recommendationsList}
             loading={loading}
           />
         </Card>
@@ -148,37 +159,37 @@ export const AnalyticsPage = () => {
       <div className="grid gap-6 lg:grid-cols-2">
         <ErrorBoundary name="Bandwidth Chart">
           <Card title="Bandwidth Usage (Mbps)" subtitle={`Timeframe: ${range}`} className="bg-white/5! border-white/10!">
-            {loading ? <ChartSkeleton /> : <BandwidthLineChart data={Array.isArray(data?.bandwidth) ? data.bandwidth : []} />}
+            {loading ? <ChartSkeleton /> : <BandwidthLineChart data={bandwidthData} />}
           </Card>
         </ErrorBoundary>
 
         <ErrorBoundary name="Traffic Analysis">
-          <Card title="Network Traffic Intensity" className="bg-white/5! border-white/10!">
-            {loading ? <ChartSkeleton /> : <TrafficAreaChart data={Array.isArray(data?.traffic) ? data.traffic : []} />}
+          <Card title="Network Traffic Intensity" subtitle="Packet flow analysis" className="bg-white/5! border-white/10!">
+            {loading ? <ChartSkeleton /> : <TrafficAreaChart data={trafficData} />}
           </Card>
         </ErrorBoundary>
 
         <ErrorBoundary name="User Distribution">
-          <Card title="Floor-wise Occupancy" className="bg-white/5! border-white/10!">
-            {loading ? <ChartSkeleton /> : <FloorUsersBarChart data={Array.isArray(data?.floorUsers) ? data.floorUsers : []} />}
+          <Card title="Floor-wise Occupancy" subtitle="Active user counts" className="bg-white/5! border-white/10!">
+            {loading ? <ChartSkeleton /> : <FloorUsersBarChart data={floorUsersData} />}
           </Card>
         </ErrorBoundary>
 
         <ErrorBoundary name="Category Distribution">
-          <Card title="IoT Device Segmentation" className="bg-white/5! border-white/10!">
-            {loading ? <ChartSkeleton /> : <DeviceCategoryPieChart data={Array.isArray(data?.deviceCategories) ? data.deviceCategories : []} />}
+          <Card title="IoT Device Segmentation" subtitle="Inventory split" className="bg-white/5! border-white/10!">
+            {loading ? <ChartSkeleton /> : <DeviceCategoryPieChart data={deviceCategoriesData} />}
           </Card>
         </ErrorBoundary>
 
         <ErrorBoundary name="Radar Metrics">
-          <Card title="Multi-vector System Health" className="bg-white/5! border-white/10!">
-            {loading ? <ChartSkeleton /> : <HealthRadarChart data={Array.isArray(data?.networkHealthRadar) ? data.networkHealthRadar : []} />}
+          <Card title="Multi-vector System Health" subtitle="Performance indicators" className="bg-white/5! border-white/10!">
+            {loading ? <ChartSkeleton /> : <HealthRadarChart data={healthRadarData} />}
           </Card>
         </ErrorBoundary>
 
         <ErrorBoundary name="Heatmap Utilization">
-          <Card title="Historical Utilization Heatmap" className="bg-white/5! border-white/10!">
-            {loading ? <ChartSkeleton /> : <HeatmapGrid data={Array.isArray(data?.heatmap) ? data.heatmap : []} />}
+          <Card title="Historical Utilization Heatmap" subtitle="Floor vs Time" className="bg-white/5! border-white/10!">
+            {loading ? <ChartSkeleton /> : <HeatmapGrid data={heatmapData} />}
           </Card>
         </ErrorBoundary>
       </div>
