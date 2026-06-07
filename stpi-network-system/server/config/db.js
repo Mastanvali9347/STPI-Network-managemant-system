@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const { mongoUri } = require('./env');
+
 mongoose.connection.on('connected', () => {
   console.log('MongoDB connection established');
 });
@@ -13,19 +15,13 @@ mongoose.connection.on('error', (err) => {
 });
 
 /**
- * Connect to MongoDB using MONGO_URI from environment.
- * Falls back to MONGODB_URI for backward compatibility.
+ * Connect to MongoDB using validated URI from environment config.
  */
 const connectDB = async () => {
-  const uri =
-    process.env.MONGO_URI ||
-    process.env.MONGODB_URI ||
-    'mongodb://127.0.0.1:27017/stpi_network';
+  const uri = mongoUri;
 
   try {
     await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
