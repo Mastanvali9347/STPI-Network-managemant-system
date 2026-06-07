@@ -1,0 +1,9 @@
+{
+  "name": "stpi-network-gate",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npm start --prefix stpi-network-system/server",
+    "build": "npm install --prefix stpi-network-system/server"
+  }
+}
