@@ -2,6 +2,7 @@ require('dotenv').config();
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const { Server } = require('socket.io');
 const connectDB = require('./config/db');
 const { port, clientUrls } = require('./config/env');
@@ -38,7 +39,12 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'running' });
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.json({
+    server: 'running',
+    database: dbStatus,
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.use('/api/network', networkRoutes);
