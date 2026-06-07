@@ -1,3 +1,4 @@
+require('dotenv').config();
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
@@ -10,8 +11,6 @@ const wifiRoutes = require('./routes/wifiRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const { initSockets } = require('./sockets/index');
 
-require('dotenv').config();
-
 const app = express();
 const server = http.createServer(app);
 
@@ -20,7 +19,8 @@ const corsOptions = {
     if (!origin || clientUrls.includes(origin)) {
       return callback(null, true);
     }
-    callback(new Error(`CORS origin denied: ${origin}`));
+    console.warn(`[CORS] Rejected origin: ${origin}. Expected one of: ${clientUrls.join(', ')}`);
+    callback(new Error(`CORS origin denied`));
   },
   credentials: true,
 };
