@@ -38,7 +38,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'STPI Network Monitoring API' });
+  res.json({ status: 'running' });
 });
 
 app.use('/api/network', networkRoutes);
