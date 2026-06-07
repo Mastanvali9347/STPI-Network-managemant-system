@@ -9,15 +9,18 @@ export const useAnimatedCounter = (target = 0, duration = 600) => {
     const start = value;
     const startTime = performance.now();
 
+    let frameId;
     const tick = (now) => {
       const t = Math.min(1, (now - startTime) / duration);
       const eased = 1 - (1 - t) ** 3;
       setValue(Math.round(start + (end - start) * eased));
-      if (t < 1) requestAnimationFrame(tick);
+      if (t < 1) {
+        frameId = requestAnimationFrame(tick);
+      }
     };
 
-    requestAnimationFrame(tick);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
   }, [target, duration]);
 
   return value;
