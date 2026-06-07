@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
-  BarChart3,
   Network,
   Server,
   Wifi,
@@ -22,7 +21,6 @@ import { ROUTES } from '../utils/constants';
 
 const navItems = [
   { to: ROUTES.DASHBOARD, label: 'Command Center', icon: LayoutDashboard },
-  { to: ROUTES.ANALYTICS, label: 'Analytics', icon: BarChart3 },
   { to: ROUTES.TOPOLOGY, label: 'Topology', icon: Network },
   { to: ROUTES.DEVICES, label: 'Devices', icon: Server },
   { to: ROUTES.WIFI, label: 'WiFi', icon: Wifi },

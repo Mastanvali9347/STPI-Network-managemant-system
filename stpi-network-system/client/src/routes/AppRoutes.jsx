@@ -4,9 +4,8 @@ import { DashboardLayout } from '../layouts/DashboardLayout';
 import { AuthLoading } from '../components/AuthLoading';
 import { ROUTES } from '../utils/constants';
 
-import { AnalyticsPage } from '../pages/Analytics';
 const DashboardPage = lazy(() => import('../pages/Dashboard').then((m) => ({ default: m?.DashboardPage || m?.default })));
-// const AnalyticsPage = lazy(() => import('../pages/Analytics').then((m) => ({ default: m?.AnalyticsPage || m?.default })));
+
 const TopologyPage = lazy(() => import('../pages/Topology').then((m) => ({ default: m?.TopologyPage || m?.default })));
 const DevicesPage = lazy(() => import('../pages/Devices').then((m) => ({ default: m?.DevicesPage || m?.default })));
 const WifiPage = lazy(() => import('../pages/Wifi').then((m) => ({ default: m?.WifiPage || m?.default })));
@@ -42,14 +41,6 @@ export const AppRoutes = () => (
         element={
           <Suspense fallback={<PageLoader />}>
             <DashboardPage />
-          </Suspense>
-        }
-      />
-      <Route
-        path={ROUTES.ANALYTICS}
-        element={
-          <Suspense fallback={<PageLoader />}>
-            <AnalyticsPage />
           </Suspense>
         }
       />
