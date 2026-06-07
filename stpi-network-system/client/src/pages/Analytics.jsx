@@ -91,6 +91,11 @@ export const AnalyticsPage = () => {
   const insightsList = useMemo(() => Array.isArray(insights?.insights) ? insights.insights : [], [insights]);
   const recommendationsList = useMemo(() => Array.isArray(insights?.recommendations) ? insights.recommendations : [], [insights]);
 
+  const k = useMemo(() => ({
+    ...FALLBACK_KPIS,
+    ...(data?.kpis || {})
+  }), [data]);
+
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-slate-900/50 rounded-2xl border border-rose-500/10">
