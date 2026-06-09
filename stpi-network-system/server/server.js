@@ -20,10 +20,16 @@ const corsOptions = {
     if (!origin || clientUrls.includes(origin)) {
       return callback(null, true);
     }
-    console.warn(`[CORS] Rejected origin: ${origin}. Expected one of: ${clientUrls.join(', ')}`);
-    callback(new Error(`CORS origin denied`));
+    console.warn(
+      `[CORS] Rejected origin: "${origin}".\n` +
+      `       Allowed origins: ${clientUrls.length ? clientUrls.join(', ') : '(none — is CLIENT_URL set in env?)'}.\n` +
+      `       Set CLIENT_URL on Render to include the Vercel URL.`
+    );
+    callback(new Error(`CORS origin denied: ${origin}`));
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 console.log('[CORS] Allowed origins:', clientUrls.length ? clientUrls.join(', ') : 'none');
@@ -35,6 +41,8 @@ const io = new Server(server, {
   },
 });
 
+// Handle preflight OPTIONS requests for all routes
+app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
 app.use(express.json());
 
