@@ -41,8 +41,8 @@ const io = new Server(server, {
   },
 });
 
-// Handle preflight OPTIONS requests for all routes
-app.options('*', cors(corsOptions));
+// Handle preflight OPTIONS requests for all routes (regex used for path-to-regexp v8+ compatibility)
+app.options(/.*/, cors(corsOptions));
 app.use(cors(corsOptions));
 app.use(express.json());
 
